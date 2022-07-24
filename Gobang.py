@@ -1,5 +1,3 @@
-import time
-
 import numpy as np
 import pygame, sys
 from pygame import QUIT, font, MOUSEBUTTONDOWN
@@ -12,21 +10,20 @@ screen = pygame.display.set_mode((width, height))
 black = (0, 0, 0)
 white = (255, 255, 255)
 space = 60
+pieces_size = 40
 
 ##img
 background = pygame.image.load("imags/tahta.jpg")
 background = pygame.transform.scale(background, (1000, 1000))
 # white_piece
 white_piece = pygame.image.load("imags/Go_w_no_bg.svg.png").convert_alpha()
-white_piece = pygame.transform.scale(white_piece, (40, 40))
+white_piece = pygame.transform.scale(white_piece, (pieces_size, pieces_size))
 # black_piece
 black_piece = pygame.image.load("imags/Go_b_no_bg.svg.png").convert_alpha()
-black_piece = pygame.transform.scale(black_piece, (40, 40))
+black_piece = pygame.transform.scale(black_piece, (pieces_size, pieces_size))
 
 ###font
 font = pygame.font.SysFont('arial', 20)
-
-first_intersection = (40, 40)
 
 step = 60
 line = 15
@@ -34,12 +31,9 @@ is_white = False
 board_piece_pos = []
 white_piece_pos = {}
 black_piece_pos = {}
-MZ = [
-
-]
 
 
-def finde_can_move_pos(x, y):
+def find_can_move_pos(x, y):
     # kesişim noktalari
     # j sağdan sola doğru sayar
     # i üstten aşağa doğru sayar
@@ -48,18 +42,6 @@ def finde_can_move_pos(x, y):
             if (x < (i + 3)) and (x > (i - 3)) and (y < (j + 3)) and (y > (j - 3)):
                 return True
     return False
-
-
-pos_index = {}
-
-
-def find_intersection():
-    index = 0
-    for i in range(60, height, space):
-        for j in range(60, height, space):
-            pos_index[(i, j)] = index
-            index += 1
-    print(pos_index)
 
 
 def draw_board():
@@ -97,7 +79,7 @@ def draw_board():
 
 
 def is_valid(x, y):
-    if finde_can_move_pos(x, y):
+    if find_can_move_pos(x, y):
         for i in range(len(board_piece_pos)):
             if (x < (board_piece_pos[i][0] + 5)) and (x > (board_piece_pos[i][0] - 5)) and (
                     y < (board_piece_pos[i][1] + 5)) and (y > (board_piece_pos[i][1] - 5)):
@@ -137,7 +119,7 @@ def is_win(board_piece_pos):
             a[y][x] = 1
         else:
             a[y][x] = 2
-
+    # düz 5    a[x][y]
     for i in range(15):
         white_5 = []
         black_5 = []
@@ -154,7 +136,7 @@ def is_win(board_piece_pos):
                 return [1, white_5]
             if len(black_5) >= 5:
                 return [2, black_5]
-
+    # dik 5  a[y][x]
     for j in range(15):
         white_5 = []
         black_5 = []
@@ -171,7 +153,7 @@ def is_win(board_piece_pos):
                 return [1, white_5]
             if len(black_5) >= 5:
                 return [2, black_5]
-
+    # sağdan sola çapraz 5  a[x+1][y-1]
     for i in range(15):
         for j in range(15):
             white_5 = []
@@ -191,7 +173,7 @@ def is_win(board_piece_pos):
                     return [1, white_5]
                 if len(black_5) >= 5:
                     return [2, black_5]
-
+    # yukardan sağa çapraz 5 a[x-1][y+1]
     for i in range(15):
         for j in range(15):
             white_5 = []
@@ -213,18 +195,6 @@ def is_win(board_piece_pos):
                     return [2, black_5]
 
 
-# sol düz 5
-
-
-# üst dik 5
-# alt dik 5
-# üst sag çapraz 5
-# alt sag çapraz 5
-# üst sol çapraz 5
-# alt sol çapraz 5
-
-
-pos = (0, 0)
 run = True
 count = 0
 while run:
@@ -239,9 +209,9 @@ while run:
 
         if event.type == MOUSEBUTTONDOWN:
             x, y = pos = event.pos
-            print(finde_can_move_pos(x, y))
+            print(find_can_move_pos(x, y))
             if is_win(board_piece_pos) == None:
-                if finde_can_move_pos(x, y):
+                if find_can_move_pos(x, y):
                     if is_valid(x, y):
                         draw_piece((x - 19, y - 15))
                         count += 1
@@ -254,8 +224,8 @@ while run:
             else:
                 win_piece = is_win(board_piece_pos)
                 if win_piece[0] == 1:
-                    print("white piece win !!")
+                    print("white piece win !!", win_piece[1])
                 else:
-                    print("black piece win !!")
+                    print("black piece win !!", win_piece[1])
 
     pygame.display.update()
