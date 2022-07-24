@@ -1,6 +1,9 @@
+import time
+
 import numpy as np
 import pygame, sys
 from pygame import QUIT, font, MOUSEBUTTONDOWN
+
 pygame.init()
 
 width, height = 960, 960
@@ -31,11 +34,10 @@ is_white = False
 board_piece_pos = []
 white_piece_pos = {}
 black_piece_pos = {}
-MZ=[
-
-
+MZ = [
 
 ]
+
 
 def finde_can_move_pos(x, y):
     # kesişim noktalari
@@ -128,13 +130,90 @@ def color(pos):
 
 def is_win(board_piece_pos):
     a = np.zeros([15, 15], dtype=int)
+    for p in board_piece_pos:
+        x = int((p[0] - 44) / 60)
+        y = int((p[1] - 44) / 60)
+        if color(p) == "white":
+            a[y][x] = 1
+        else:
+            a[y][x] = 2
 
-    for i in board_piece_pos:
-        x=int(i[0]+60)
-        y=int(i[1])
+    for i in range(15):
+        white_5 = []
+        black_5 = []
+        for j in range(15):
+            if a[i][j] == 1:
+                white_5.append((i, j))
+            else:
+                white_5 = []
+            if a[i][j] == 2:
+                black_5.append((i, j))
+            else:
+                black_5 = []
+            if len(white_5) >= 5:
+                return [1, white_5]
+            if len(black_5) >= 5:
+                return [2, black_5]
+
+    for j in range(15):
+        white_5 = []
+        black_5 = []
+        for i in range(15):
+            if a[i][j] == 1:
+                white_5.append([i, j])
+            else:
+                white_5 = []
+            if a[i][j] == 2:
+                black_5.append([i, j])
+            else:
+                black_5 = []
+            if len(white_5) >= 5:
+                return [1, white_5]
+            if len(black_5) >= 5:
+                return [2, black_5]
+
+    for i in range(15):
+        for j in range(15):
+            white_5 = []
+            black_5 = []
+            for k in range(15):
+                if i + k >= 15 or j + k >= 15:
+                    break
+                if a[i + k][j + k] == 1:
+                    white_5.append([i + k, j + k])
+                else:
+                    white_5 = []
+                if a[i + k][j + k] == 2:
+                    black_5.append([i + k, j + k])
+                else:
+                    black_5 = []
+                if len(white_5) >= 5:
+                    return [1, white_5]
+                if len(black_5) >= 5:
+                    return [2, black_5]
+
+    for i in range(15):
+        for j in range(15):
+            white_5 = []
+            black_5 = []
+            for k in range(15):
+                if i + k >= 15 or j - k < 0:
+                    break
+                if a[i + k][j - k] == 1:
+                    white_5.append([i + k, j - k])
+                else:
+                    white_5 = []
+                if a[i + k][j - k] == 2:
+                    black_5.append([i + k, j - k])
+                else:
+                    black_5 = []
+                if len(white_5) >= 5:
+                    return [1, white_5]
+                if len(black_5) >= 5:
+                    return [2, black_5]
 
 
-    # sol düz 5
+# sol düz 5
 
 
 # üst dik 5
@@ -161,16 +240,22 @@ while run:
         if event.type == MOUSEBUTTONDOWN:
             x, y = pos = event.pos
             print(finde_can_move_pos(x, y))
+            if is_win(board_piece_pos) == None:
+                if finde_can_move_pos(x, y):
+                    if is_valid(x, y):
+                        draw_piece((x - 19, y - 15))
+                        count += 1
+                        board_piece_pos.append(pos)
+                        color(pos)
+                        print(black_piece_pos)
+                        print(white_piece_pos)
 
-            if finde_can_move_pos(x, y):
-                if is_valid(x, y):
-                    draw_piece((x - 19, y - 15))
-                    count += 1
-                    board_piece_pos.append(pos)
-                    color(pos)
-                    print(black_piece_pos)
-                    print(white_piece_pos)
-
-                    is_white = not is_white
+                        is_white = not is_white
+            else:
+                win_piece = is_win(board_piece_pos)
+                if win_piece[0] == 1:
+                    print("white piece win !!")
+                else:
+                    print("black piece win !!")
 
     pygame.display.update()
