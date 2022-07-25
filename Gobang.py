@@ -1,13 +1,17 @@
 import numpy as np
 import pygame, sys
-from pygame import QUIT, font, MOUSEBUTTONDOWN
+from pygame import QUIT, MOUSEBUTTONDOWN
 from pygame.time import Clock
 
 from color import Colors
 
+pygame.init()
+
 
 class Go:
-    def __int__(self):
+
+    def __init__(self):
+
         self.size = (960, 960)
         self.font = pygame.font.SysFont('arial', 20)
         self.screen = pygame.display.set_mode(self.size)
@@ -15,6 +19,7 @@ class Go:
         self.space = 60
         self.pieces_size = 40
         self.line = 15
+        self.fps = 60
         self.is_white = False
         self.board_piece_pos = []
         self.white_piece_pos = {}
@@ -27,10 +32,9 @@ class Go:
         # black_piece
         black_piece_img = pygame.image.load("imags/Go_b_no_bg.svg.png").convert_alpha()
         self.black_piece = pygame.transform.scale(black_piece_img, (self.pieces_size, self.pieces_size))
-        self.screen.blit(self.background, (0, 0))
 
     def draw_board(self):
-        x, y = self.size[0], self.size[1]
+        x, y = self.size[0], self.space
         number_space = 30
         # sayi+dik çizgi
         for i in range(self.line):
@@ -44,7 +48,7 @@ class Go:
 
             pygame.draw.line(self.screen, Colors.black, (self.space, y), (x - self.space, y), 1)
             y += self.space
-        x, y = self.size[0], self.size[1]
+        x, y = self.space, self.size[1]
         # harf+düz çizgi
         for i in range(self.line):
             # MERKEZ NOKTA
@@ -187,7 +191,12 @@ class Go:
     def run(self):
         run = True
         while run:
+            self.screen.blit(self.background, (0, 0))
+
             self.draw_board()
+
+            self.clock.tick(self.fps)
+
             for event in pygame.event.get():
 
                 if event.type == QUIT:
