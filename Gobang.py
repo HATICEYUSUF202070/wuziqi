@@ -230,8 +230,6 @@ class Go:
             pygame.display.flip()
 """
 
-
-
 import time
 
 import numpy as np
@@ -239,7 +237,6 @@ import pygame, sys
 from pygame import QUIT, font, MOUSEBUTTONDOWN
 
 pygame.init()
-
 width, height = 960, 960
 
 screen = pygame.display.set_mode((width, height))
