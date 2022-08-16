@@ -2,7 +2,7 @@ import socket
 from _thread import *
 
 s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-port = 5555
+port = 63342
 server = 'localhost'
 
 server_ip = socket.gethostbyname(server)
@@ -19,6 +19,7 @@ pos = ["0:50,50", "1:100,100"]
 
 
 def threaded_clint(conn):
+    print(conn)
     global user_id, pos
     conn.send(str.encode(user_id))
     user_id = "1"
@@ -35,9 +36,9 @@ def threaded_clint(conn):
                 arr = reply.split(":")
                 id = arr[0]
                 pos[id] = reply
-                if id == "0": n_id = "1"
-                if id == "1": n_id = "0"
-                reply = pos[n_id][:]
+                if id == "0": nid = "1"
+                if id == "1": nid = "0"
+                reply = pos[nid][:]
                 print("Sending:" + reply)
         except:
             break
@@ -49,4 +50,4 @@ while True:
     conn, addr = s.accept()
     print("Connected to: ", addr)
 
-    start_new_thread(threaded_clint, (conn,))
+    start_new_thread(threaded_clint(conn))
