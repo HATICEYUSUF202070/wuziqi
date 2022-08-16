@@ -235,6 +235,9 @@ import time
 import numpy as np
 import pygame, sys
 from pygame import QUIT, font, MOUSEBUTTONDOWN
+from network import Network
+
+net = Network()
 
 pygame.init()
 width, height = 960, 960
@@ -334,6 +337,24 @@ def is_valid(x, y):
                     y < (board_piece_pos[i][1] + 5)) and (y > (board_piece_pos[i][1] - 5)):
                 return False
     return True
+
+
+def send_data(pos):
+    """
+    Send position to server
+    :return: None
+    """
+    data = (net.id) + ":" + str(pos[0]) + "," + str(pos[1])
+    reply = net.send(data)
+    return reply
+
+
+def parse_data(data):
+    try:
+        d = data.split(":")[1].split(",")
+        return int(d[0]), int(d[1])
+    except:
+        return 0, 0
 
 
 def draw_piece(board_piece_pos):
@@ -470,6 +491,7 @@ while run:
 
         if event.type == MOUSEBUTTONDOWN:
             x, y = pos = event.pos
+            pos = parse_data(send_data(pos))
             print(finde_can_move_pos(x, y))
             if is_win(board_piece_pos) == None:
                 if finde_can_move_pos(x, y):

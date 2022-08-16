@@ -19,7 +19,6 @@ pos = ["0:50,50", "1:100,100"]
 
 
 def threaded_clint(conn):
-    conn, addr = s.accept()
     global user_id, pos
     conn.send(str.encode(user_id))
     user_id = "1"
@@ -44,8 +43,6 @@ def threaded_clint(conn):
             break
     print("Connection Closed")
     conn.close()
-
-
 
 
 while True:
