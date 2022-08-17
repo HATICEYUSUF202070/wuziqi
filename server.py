@@ -2,8 +2,8 @@ import socket
 from _thread import *
 import sys
 
-server = "192.168.1.33"
-port = 5043
+server = "192.168.1.3"
+port =5555
 my_socket = socket.socket()
 try:
     my_socket.bind((server, port))
