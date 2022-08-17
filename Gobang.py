@@ -235,7 +235,7 @@ import time
 import numpy as np
 import pygame, sys
 from pygame import QUIT, font, MOUSEBUTTONDOWN
-
+import threading
 from network import Network
 
 net = Network()

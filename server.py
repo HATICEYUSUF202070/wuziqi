@@ -1,53 +1,38 @@
 import socket
 from _thread import *
+import sys
 
-s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-port = 63342
-server = 'localhost'
-
-server_ip = socket.gethostbyname(server)
+server = "192.168.1.33"
+port = 5043
+my_socket = socket.socket()
 try:
-    s.bind((server, port))
-except socket.error as err:
-    print(str(err))
+    my_socket.bind((server, port))
 
-s.listen(2)
-print("waiting for a connection")
+except socket.error as e:
+    print(str(e))
 
-user_id = "0"
-pos = ["0:50,50", "1:100,100"]
+my_socket.listen(2)
+print("waiting for connection,server started")
 
 
-def threaded_clint(conn):
-    print(conn)
-    global user_id, pos
-    conn.send(str.encode(user_id))
-    user_id = "1"
-    reply = ""
+def thread_client(conn):
     while True:
         try:
             data = conn.recv(2048)
             reply = data.decode("utf-8")
             if not data:
-                conn.send(str.encode("Goodbye"))
+                print("disconnect!")
                 break
             else:
-                print("Recieved:" + reply)
-                arr = reply.split(":")
-                id = arr[0]
-                pos[id] = reply
-                if id == "0": nid = "1"
-                if id == "1": nid = "0"
-                reply = pos[nid][:]
-                print("Sending:" + reply)
+                print("Received : " + reply)
+                print("Sending : " + reply)
+            conn.sendall(str.encode(reply))
         except:
             break
-    print("Connection Closed")
-    conn.close()
 
 
 while True:
-    conn, addr = s.accept()
-    print("Connected to: ", addr)
+    conn, addr = my_socket.accept()
+    print("connected to : ", addr)
 
-    start_new_thread(threaded_clint(conn))
+    start_new_thread(thread_client, (conn,))
